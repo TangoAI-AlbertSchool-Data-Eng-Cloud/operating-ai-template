@@ -537,7 +537,7 @@
     },
     {
       "type": "timeseries",
-      "title": "Burn rate (14.4 pages)",
+      "title": "Burn rate (tickets only)",
       "gridPos": {
         "x": 18,
         "y": 8,
@@ -578,14 +578,15 @@
               },
               {
                 "color": "red",
-                "value": 14.4
+                "value": 1
               }
             ]
           }
         },
         "overrides": []
       },
-      "options": {}
+      "options": {},
+      "description": "This SLO never pages: a business outcome lags its cause. Above 1, the budget is spent faster than the even pace; a ticket opens when the last three days and the last six hours both are."
     },
     {
       "type": "row",

@@ -522,28 +522,6 @@ groups:
         annotations:
           summary: "reached-a-team: error budget burning at over 1x"
           description: "Triaged complaints whose product leads to a team (not left unassigned). Objective 0.999; over 3d and 6h the bad share exceeds 0.001."
-      - alert: SLOBurn14_4x
-        expr: |
-          slo:error_ratio{slo="answered-in-time",window="1h"} > 0.576
-          and ignoring(window)
-          slo:error_ratio{slo="answered-in-time",window="5m"} > 0.576
-        labels:
-          severity: page
-          slo: answered-in-time
-        annotations:
-          summary: "answered-in-time: error budget burning at over 14.4x"
-          description: "Payment-product complaints answered within 15 business days (PSD2), counted at each deadline. Objective 0.96; over 1h and 5m the bad share exceeds 0.576."
-      - alert: SLOBurn6x
-        expr: |
-          slo:error_ratio{slo="answered-in-time",window="6h"} > 0.24
-          and ignoring(window)
-          slo:error_ratio{slo="answered-in-time",window="30m"} > 0.24
-        labels:
-          severity: page
-          slo: answered-in-time
-        annotations:
-          summary: "answered-in-time: error budget burning at over 6x"
-          description: "Payment-product complaints answered within 15 business days (PSD2), counted at each deadline. Objective 0.96; over 6h and 30m the bad share exceeds 0.24."
       - alert: SLOBurn1x
         expr: |
           slo:error_ratio{slo="answered-in-time",window="3d"} > 0.04

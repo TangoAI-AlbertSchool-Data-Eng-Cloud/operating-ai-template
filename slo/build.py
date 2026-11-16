@@ -75,6 +75,9 @@ def rules() -> str:
     for slo in SLOS:
         budget = round(1 - slo["objective"], 6)   # the share of events allowed to be bad
         for long_w, short_w, burn, severity in ALERTS:
+            # An SLO marked "pages": False keeps its ticket and loses its pages.
+            if severity == "page" and not slo.get("pages", True):
+                continue
             # Burning at `burn` times the allowed rate = a bad share of burn x budget.
             threshold = round(burn * budget, 6)
             out += [
@@ -163,15 +166,23 @@ def dashboard() -> dict:
             "1 - (bad share over the last 30 days) / (1 - objective). In the lab, the "
             "30-day window holds only the time the lab has run, so an hour-long incident "
             "on a two-hour-old lab overspends the budget many times over.")
-        # The burn rate over the fast alert's two windows, with the paging line.
+        # The burn rate over the fast alert's two windows, with the paging line;
+        # an SLO that never pages gets the even pace, 1, as its line instead.
+        pages = slo.get("pages", True)
+        line = 14.4 if pages else 1
         panels.append(_panel(
-            "timeseries", "Burn rate (14.4 pages)",
+            "timeseries", "Burn rate (14.4 pages)" if pages else "Burn rate (tickets only)",
             [(f'slo:error_ratio{{{sel},window="5m"}} / {budget}', "5 min"),
              (f'slo:error_ratio{{{sel},window="1h"}} / {budget}', "1 hour")],
             x, y + 7, 6, 7, None,
             # A soft maximum of 20 keeps the 14.4 line in view while nothing burns.
             {"custom": {"thresholdsStyle": {"mode": "line+area"}, "axisSoftMin": 0, "axisSoftMax": 20},
-             **_thresholds((None, "transparent"), (14.4, "red"))}))
+             **_thresholds((None, "transparent"), (line, "red"))}))
+        if not pages:
+            panels[-1]["description"] = (
+                "This SLO never pages: a business outcome lags its cause. Above 1, the "
+                "budget is spent faster than the even pace; a ticket opens when the last "
+                "three days and the last six hours both are.")
     y += 14   # the tallest column: 4 + 3 + 7 rows
 
     # Middle: the raw signals, to see WHY an SLO moved.

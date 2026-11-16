@@ -96,6 +96,12 @@ SLOS = [
         # the law's exception (a holding reply, up to 35 days) may be used;
         # whether to raise it to 98% is a question for your team.
         "objective": 0.96,
+        # Tickets only, never a page. A business outcome lags its cause: a
+        # deadline is missed 15 business days after the complaint arrives, by
+        # when the cause has been paging for a while (in I1, 16 minutes), and
+        # a page now would wake a second person about a cause already being
+        # handled. The build gives it the three-day ticket and no page.
+        "pages": False,
         "error_ratio": (
             "(sum(rate(complaint_deadlines_total{{result=\"breached\",psd2=\"yes\"}}[{w}])) or vector(0))"
             " / sum(rate(complaint_deadlines_total{{psd2=\"yes\"}}[{w}]))"
